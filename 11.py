@@ -47,6 +47,7 @@ def solution(monkeys, rounds):
     for _ in range(rounds):
         for m in range(len(monkeys)):
             for item in monkeys[m]['items']:
+                # Monkey is looking, increase worry
                 if monkeys[m]['operation_value'] == 'old':
                     worry = item
                 else:
@@ -55,9 +56,9 @@ def solution(monkeys, rounds):
                 if monkeys[m]['operation'] == '+':
                     item += worry
                 if monkeys[m]['operation'] == '*':
-                    item = item * worry
+                    item *= worry
 
-                # Inspected item
+                # Inspected item, reduce worry?
                 monkeys[m]['num_inspected'] += 1
                 item = math.floor(item/worry_level)
 
@@ -66,9 +67,10 @@ def solution(monkeys, rounds):
 
                 # Throw items
                 if item % monkeys[m]['divisor'] == 0:
-                    monkeys[monkeys[m]['test_true']]['items'].append(item)
+                    throw_to = monkeys[m]['test_true']
                 else:
-                    monkeys[monkeys[m]['test_false']]['items'].append(item)
+                    throw_to = monkeys[m]['test_false']
+                monkeys[throw_to]['items'].append(item)
 
             # This Monkey threw all their items
             monkeys[m]['items'] = []
@@ -82,6 +84,7 @@ def parse_input(input):
     monkey_input = input.split('\n\n')
     monkeys = []
     
+    # This is a disaster, not going to refactor
     for monkey_attributes in monkey_input:
         attributes = monkey_attributes.splitlines()
         monkey = {}
