@@ -34,27 +34,27 @@ Monkey 3:
 '''
 
 def solution(monkeys, rounds):
-    if rounds == 20:
-        worry_level = 3
-    if rounds == 10000:
+    if rounds > 20:
         worry_level = 1
+    else:
+        worry_level = 3
 
     # Containing WORRY LEVELS!!!
     lowest_common_worry = 1
     for monkey in monkeys:
-        lowest_common_worry *= monkey['test']['test']
+        lowest_common_worry *= monkey['divisor']
 
-    for round in range(rounds):
+    for _ in range(rounds):
         for m in range(len(monkeys)):
             for item in monkeys[m]['items']:
-                if monkeys[m]['operation'][1] == 'old':
+                if monkeys[m]['operation_value'] == 'old':
                     worry = item
                 else:
-                    worry = int(monkeys[m]['operation'][1])
+                    worry = int(monkeys[m]['operation_value'])
 
-                if monkeys[m]['operation'][0] == '+':
+                if monkeys[m]['operation'] == '+':
                     item += worry
-                if monkeys[m]['operation'][0] == '*':
+                if monkeys[m]['operation'] == '*':
                     item = item * worry
 
                 # Inspected item
@@ -65,10 +65,10 @@ def solution(monkeys, rounds):
                 item = item % lowest_common_worry
 
                 # Throw items
-                if item % monkeys[m]['test']['test'] == 0:
-                    monkeys[monkeys[m]['test']['true']]['items'].append(item)
+                if item % monkeys[m]['divisor'] == 0:
+                    monkeys[monkeys[m]['test_true']]['items'].append(item)
                 else:
-                    monkeys[monkeys[m]['test']['false']]['items'].append(item)
+                    monkeys[monkeys[m]['test_false']]['items'].append(item)
 
             # This Monkey threw all their items
             monkeys[m]['items'] = []
@@ -109,7 +109,8 @@ def parse_input(input):
         if len(monkeys) != i:
             e = "Expected Monkey "+ str(i) +", got Monkey "+ str(len(monkeys))
             raise Exception(e)
-        monkey['operation'] = operation  
+        monkey['operation'] = operation[0]
+        monkey['operation_value'] = operation[1]
 
         # Test and throw
         if attributes[3].split(":")[0] != '  Test':
@@ -129,7 +130,9 @@ def parse_input(input):
         if len(monkeys) != i:
             e = "Expected Monkey "+ str(i) +", got Monkey "+ str(len(monkeys))
             raise Exception(e)
-        monkey['test'] = test   
+        monkey['divisor'] = test['test']
+        monkey['test_true'] = test['true']
+        monkey['test_false'] = test['false']
 
         # Build Monkeys
         monkey['num_inspected'] = 0
