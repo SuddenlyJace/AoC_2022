@@ -34,8 +34,17 @@ Monkey 3:
 '''
 
 def solution(monkeys, rounds):
+    if rounds == 20:
+        worry_level = 3
+    if rounds == 10000:
+        worry_level = 1
+
+    # Containing WORRY LEVELS!!!
+    lowest_common_worry = 1
+    for monkey in monkeys:
+        lowest_common_worry *= monkey['test']['test']
+
     for round in range(rounds):
-        print("\n\n---Round "+str(round+1)+"---")
         for m in range(len(monkeys)):
             for item in monkeys[m]['items']:
                 if monkeys[m]['operation'][1] == 'old':
@@ -50,7 +59,10 @@ def solution(monkeys, rounds):
 
                 # Inspected item
                 monkeys[m]['num_inspected'] += 1
-                item = math.floor(item/3)
+                item = math.floor(item/worry_level)
+
+                # Contain WORRY LEVELS!!!
+                item = item % lowest_common_worry
 
                 # Throw items
                 if item % monkeys[m]['test']['test'] == 0:
@@ -61,9 +73,6 @@ def solution(monkeys, rounds):
             # This Monkey threw all their items
             monkeys[m]['items'] = []
 
-        for monkey in monkeys:
-            print(monkey)
-    
     monkey_buisness = [monkey['num_inspected'] for monkey in monkeys]
     monkey_buisness.sort(reverse=True)
 
@@ -132,12 +141,19 @@ def main():
     test_data = parse_input(example)
     solution_1 = solution(test_data, 20)
     assert(solution_1 == 10605)
+    test_data = parse_input(example)
+    solution_2 = solution(test_data, 10000)
+    assert(solution_2 == 2713310158)
 
     program_file_name = sys.argv[0]
     input_file_name = 'input_' + os.path.splitext(program_file_name)[0] + '.txt'
     data = parse_input(get_input(input_file_name))
     solution_1 = solution(data, 20)
+    assert(solution_1 == 113232)
     print('Part 1: ', solution_1)
+    data = parse_input(get_input(input_file_name))
+    solution_2 = solution(data, 10000)
+    print('Part 2: ', solution_2)
     
 if __name__ == '__main__':
     sys.exit(main())
