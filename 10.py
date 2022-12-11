@@ -153,6 +153,7 @@ noop
 def solution(data):
     X = 1
     program = []
+    CRT = ''
 
     for instruction in data:
         if instruction[0] == 'noop':
@@ -162,12 +163,21 @@ def solution(data):
             program.append(int(instruction[1]))
 
     signal = []
-    for i in range(221):
+    for i in range(240):
+        # Draw CRT
+        if (abs(X - (i%40)) <= 1):
+            CRT += '#'
+        else:
+            CRT += '.'
         # Record value before instruction completes
         if ((i+21) % 40) == 0:
             signal.append(X*(i+1))
         X += program[i%len(program)]
 
+    # Display CRT
+    n = 40
+    for line in [CRT[i:i+n] for i in range(0, len(CRT), n)]:
+        print(line)
     return sum(signal)
 
 def parse_input(input):
@@ -182,9 +192,7 @@ def main():
     input_file_name = 'input_' + os.path.splitext(program_file_name)[0] + '.txt'
     data = parse_input(get_input(input_file_name))
     solution_1 = solution(data)
-    #solution_2 = solution(data)
     print('Part 1: ', solution_1)
-    #print('Part 2: ', solution_2)
     
 if __name__ == '__main__':
     sys.exit(main())
